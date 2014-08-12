@@ -1,8 +1,7 @@
 package com.hp.android.yamba;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,9 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.marakana.android.yamba.clientlib.YambaClient;
-import com.marakana.android.yamba.clientlib.YambaClientException;
 
 
 public class StatusActivity extends Activity implements TextWatcher {
@@ -38,52 +34,20 @@ public class StatusActivity extends Activity implements TextWatcher {
         mStatusButton = (Button) findViewById(R.id.status_button);
 
         mStatusText.addTextChangedListener(this);
-        if (savedInstanceState == null) {
-            mStatusText.setText(null);
-        }
+        final Intent callingIntent = getIntent();
+        final String initialStatus = callingIntent.getStringExtra(StatusUpdateService.EXTRA_STATUS);
+        mStatusText.setText(initialStatus);
     }
 
     public void onPostClick(View v) {
         final String status = mStatusText.getText().toString();
         Log.d(TAG, "Posting Status...");
 
-        StatusUpdateTask task = new StatusUpdateTask();
-        task.execute(status);
-    }
+        Intent intent = new Intent(this, StatusUpdateService.class);
+        intent.putExtra(StatusUpdateService.EXTRA_STATUS, status);
+        startService(intent);
 
-    private class StatusUpdateTask extends AsyncTask<String, Void, Boolean> {
-
-        private ProgressDialog mProgress;
-
-        @Override
-        protected void onPreExecute() {
-            mProgress = ProgressDialog.show(StatusActivity.this,
-                    "Posting...", "Posting Status", true);
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            final String status = params[0];
-            YambaClient client = new YambaClient("student", "password");
-
-            try {
-                client.postStatus(status);
-                Log.d(TAG, "Status Complete");
-            } catch (YambaClientException e) {
-                Log.wtf(TAG, "Error Posting Status", e);
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            mProgress.dismiss();
-            if (result) {
-                mStatusText.getText().clear();
-            }
-        }
+        mStatusText.getText().clear();
     }
 
     @Override

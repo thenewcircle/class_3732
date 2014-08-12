@@ -6,5 +6,9 @@
     <string name="action_settings">Settings</string>
     <string name="status_button_text">Post</string>
     <string name="status_text_hint">What\'s Happening?</string>
+    <string name="notification_post_title">Posting Status…</string>
+    <string name="notification_post_text">Posting your status to Yamba…</string>
+    <string name="notification_post_error_title">Yamba Error</string>
+    <string name="notification_post_error_text">Error posting your status to Yamba. Tap here to try again.</string>
 
 </resources>
