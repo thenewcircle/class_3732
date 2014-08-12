@@ -10,5 +10,13 @@
     <string name="notification_post_text">Posting your status to Yamba…</string>
     <string name="notification_post_error_title">Yamba Error</string>
     <string name="notification_post_error_text">Error posting your status to Yamba. Tap here to try again.</string>
+    <string name="pref_key_username">prefUsername</string>
+    <string name="pref_title_username">Yamba Username</string>
+    <string name="pref_summary_username">Your Yamba Account Username</string>
+    <string name="pref_key_password">prefPassword</string>
+    <string name="pref_title_password">Yamba Password</string>
+    <string name="pref_summary_password">Your Yamba Account Password</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
 </resources>
