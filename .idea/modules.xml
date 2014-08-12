@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Yamba.iml" filepath="$PROJECT_DIR$/Yamba.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yambaClientLib/yambaClientLib.iml" filepath="$PROJECT_DIR$/yambaClientLib/yambaClientLib.iml" />
     </modules>
   </component>
 </project>
