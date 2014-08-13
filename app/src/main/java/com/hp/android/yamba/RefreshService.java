@@ -3,6 +3,8 @@ package com.hp.android.yamba;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
@@ -35,24 +37,35 @@ public class RefreshService extends IntentService {
             try {
                 LogUtil.d(this, "Getting latest timeline...");
                 statuses = mYambaClient.getTimeline(MAX_POSTS);
-                LogUtil.d(this, "Refresh complete. Received "+statuses.size()+" items");
             } catch (YambaClientException e) {
                 LogUtil.wtf(this, "Error Refreshing Timeline", e);
                 return;
             }
 
-            for (YambaClient.Status item : statuses) {
-                LogUtil.d(this, item.getMessage());
-            }
+            final ContentResolver resolver = getContentResolver();
+            final ContentValues[] values = new ContentValues[statuses.size()];
+            for (int i=0; i < values.length; i++) {
+                final YambaClient.Status item = statuses.get(i);
+                final ContentValues statusValues = new ContentValues();
+                statusValues.put(StatusContract.Columns._ID, item.getId());
+                statusValues.put(StatusContract.Columns.CREATED_AT, item.getCreatedAt().getTime());
+                statusValues.put(StatusContract.Columns.USER, item.getUser());
+                statusValues.put(StatusContract.Columns.MESSAGE, item.getMessage());
 
-            Notification note = new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.notification_refresh_title))
-                    .setContentText(getString(R.string.notification_refresh_text))
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setTicker(getString(R.string.notification_refresh_title))
-                    .setAutoCancel(true)
-                    .build();
-            mNotificationManager.notify(YambaUtil.NOTE_REFRESH_ID, note);
+                values[i] = statusValues;
+            }
+            int affected = resolver.bulkInsert(StatusContract.CONTENT_URI, values);
+            LogUtil.d(this, "Refresh complete. Received "+affected+" items");
+            if (affected > 0) {
+                Notification note = new Notification.Builder(this)
+                        .setContentTitle(getString(R.string.notification_refresh_title))
+                        .setContentText(getResources().getQuantityString(R.plurals.notification_refresh_text, affected, affected))
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setTicker(getString(R.string.notification_refresh_title))
+                        .setAutoCancel(true)
+                        .build();
+                mNotificationManager.notify(YambaUtil.NOTE_REFRESH_ID, note);
+            }
         }
     }
 }

@@ -73,10 +73,14 @@ public class StatusProvider extends ContentProvider {
 
         switch (sUriMatcher.match(uri)) {
             case MATCH_DIR:
-                long id = db.insertOrThrow(StatusContract.PATH, null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
+                long id = db.insertWithOnConflict(StatusContract.PATH, null, values,
+                        SQLiteDatabase.CONFLICT_IGNORE);
+                if (id > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    return ContentUris.withAppendedId(uri, id);
+                }
 
-                return ContentUris.withAppendedId(uri, id);
+                return null;
             case MATCH_ITEM:
                 throw new IllegalArgumentException("Cannot insert into existing record!");
             default:
@@ -96,7 +100,8 @@ public class StatusProvider extends ContentProvider {
 
                     for (int i = 0; i < values.length; i++) {
                         final ContentValues item = values[i];
-                        long id = db.insert(StatusContract.PATH, null, item);
+                        long id = db.insertWithOnConflict(StatusContract.PATH, null, item,
+                                SQLiteDatabase.CONFLICT_IGNORE);
                         if (id > 0) {
                             inserted++;
                         }
