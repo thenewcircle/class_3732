@@ -26,12 +26,17 @@
             android:name=".StatusUpdateService"
             android:exported="false" >
         </service>
-
         <service
             android:name=".RefreshService"
             android:exported="false" >
         </service>
 
+        <provider
+            android:name=".StatusProvider"
+            android:authorities="com.hp.android.yamba.provider"
+            android:enabled="true"
+            android:exported="false" >
+        </provider>
     </application>
 
 </manifest>
