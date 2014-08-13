@@ -74,6 +74,8 @@ public class StatusProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case MATCH_DIR:
                 long id = db.insertOrThrow(StatusContract.PATH, null, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+
                 return ContentUris.withAppendedId(uri, id);
             case MATCH_ITEM:
                 throw new IllegalArgumentException("Cannot insert into existing record!");
@@ -83,15 +85,83 @@ public class StatusProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        switch (sUriMatcher.match(uri)) {
+            case MATCH_DIR:
+                int inserted = 0;
+                try {
+                    db.beginTransaction();
+
+                    for (int i = 0; i < values.length; i++) {
+                        final ContentValues item = values[i];
+                        long id = db.insert(StatusContract.PATH, null, item);
+                        if (id > 0) {
+                            inserted++;
+                        }
+                    }
+
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
+                getContext().getContentResolver().notifyChange(uri, null);
+
+                return inserted;
+            case MATCH_ITEM:
+                throw new IllegalArgumentException("Cannot insert into existing record!");
+            default:
+                throw new IllegalArgumentException("Bad Uri...Go away!");
+        }
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
-            String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        switch (sUriMatcher.match(uri)) {
+            case MATCH_DIR:
+                //We're set already
+                break;
+            case MATCH_ITEM:
+                long id = ContentUris.parseId(uri);
+                selection = StatusContract.Columns._ID + " = ?";
+                selectionArgs = new String[] {String.valueOf(id)};
+                break;
+            default:
+                throw new IllegalArgumentException("Bad Uri...Go away!");
+        }
+
+        int affected = db.delete(StatusContract.PATH, selection, selectionArgs);
+        if (affected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return affected;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        switch (sUriMatcher.match(uri)) {
+            case MATCH_DIR:
+                //We're set already
+                break;
+            case MATCH_ITEM:
+                long id = ContentUris.parseId(uri);
+                selection = StatusContract.Columns._ID + " = ?";
+                selectionArgs = new String[]{String.valueOf(id)};
+                break;
+            default:
+                throw new IllegalArgumentException("Bad Uri...Go away!");
+        }
+
+        int affected = db.update(StatusContract.PATH, values, selection, selectionArgs);
+        if (affected > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return affected;
     }
 }
