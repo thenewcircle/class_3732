@@ -18,5 +18,8 @@
     <string name="pref_summary_password">Your Yamba Account Password</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="notification_refresh_title">New Statuses Available</string>
+    <string name="notification_refresh_text">You Have New Updates!</string>
+    <string name="action_refresh">Refresh</string>
 
 </resources>

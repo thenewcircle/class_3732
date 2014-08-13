@@ -17,7 +17,6 @@ import com.marakana.android.yamba.clientlib.YambaClientException;
  */
 public class StatusUpdateService extends IntentService {
 
-    public static final int NOTE_ID = 1337;
     public static final String EXTRA_STATUS = "com.hp.android.yamba.EXTRA_STATUS";
 
     public StatusUpdateService() {
@@ -30,7 +29,7 @@ public class StatusUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mYambaClient = new YambaClient("student", "password");
+        mYambaClient = YambaUtil.getClient(this);
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -47,12 +46,12 @@ public class StatusUpdateService extends IntentService {
                     .setTicker(getString(R.string.notification_post_title))
                     .setOngoing(true)
                     .build();
-            mNotificationManager.notify(NOTE_ID, note);
+            mNotificationManager.notify(YambaUtil.NOTE_POST_ID, note);
 
             try {
                 mYambaClient.postStatus(status);
 
-                mNotificationManager.cancel(NOTE_ID);
+                mNotificationManager.cancel(YambaUtil.NOTE_POST_ID);
                 LogUtil.d(this, "Status Complete");
             } catch (YambaClientException e) {
                 Intent callback = new Intent(this, StatusActivity.class);
@@ -70,7 +69,7 @@ public class StatusUpdateService extends IntentService {
                         .setAutoCancel(true)
                         .build();
 
-                mNotificationManager.notify(NOTE_ID, note);
+                mNotificationManager.notify(YambaUtil.NOTE_POST_ID, note);
                 LogUtil.wtf(this, "Error Posting Status", e);
             }
         }
