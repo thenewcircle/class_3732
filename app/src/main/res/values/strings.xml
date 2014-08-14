@@ -20,9 +20,14 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="notification_refresh_title">New Statuses Available</string>
     <string name="action_refresh">Refresh</string>
+
     <plurals name="notification_refresh_text">
         <item quantity="one">You Have %d New Update…</item>
         <item quantity="other">You Have %d New Updates!</item>
     </plurals>
+
+    <string name="title_activity_timeline">TimelineActivity</string>
+    <string name="action_post">Post Status</string>
+    <string name="empty_list">No Items</string>
 
 </resources>
