@@ -9,7 +9,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +56,7 @@ public class TimelineFragment extends Fragment implements LoaderManager.LoaderCa
                 int createdAtIndex = cursor.getColumnIndex(StatusContract.Columns.CREATED_AT);
                 if (createdAtIndex == columnIndex) {
                     long createdAt = cursor.getLong(createdAtIndex);
-                    CharSequence dateString = DateUtils.getRelativeTimeSpanString(createdAt, System.currentTimeMillis(), 0);
+                    CharSequence dateString = YambaUtil.getCreatedAtString(createdAt);
 
                     TextView createdAtText = (TextView) view.findViewById(R.id.text_created_at);
                     createdAtText.setText(dateString);

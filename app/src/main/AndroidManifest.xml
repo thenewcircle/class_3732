@@ -43,6 +43,14 @@
             android:exported="false" >
         </provider>
 
+        <activity
+            android:name=".StatusDetailsActivity"
+            android:label="@string/title_activity_status_details"
+            android:parentActivityName=".TimelineActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hp.android.yamba.TimelineActivity" />
+        </activity>
     </application>
 
 </manifest>

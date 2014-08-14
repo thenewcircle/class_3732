@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 
 public class TimelineActivity extends Activity implements TimelineFragment.OnTimelineInteractionListener {
+
+    private boolean mInTwoPaneMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +20,9 @@ public class TimelineActivity extends Activity implements TimelineFragment.OnTim
         setContentView(R.layout.activity_timeline);
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+
+        View pane = findViewById(R.id.fragment_details);
+        mInTwoPaneMode = (pane != null);
     }
 
     @Override
@@ -54,6 +59,16 @@ public class TimelineActivity extends Activity implements TimelineFragment.OnTim
 
     @Override
     public void onTimelineItemClick(Uri uri) {
-        Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show();
+        if (mInTwoPaneMode) {
+            //Launch a fragment
+            StatusDetailsFragment fragment = StatusDetailsFragment.newInstance(uri);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_details, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, StatusDetailsActivity.class);
+            intent.setData(uri);
+            startActivity(intent);
+        }
     }
 }

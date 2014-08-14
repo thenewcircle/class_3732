@@ -3,6 +3,7 @@ package com.hp.android.yamba;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
 
@@ -18,5 +19,10 @@ public class YambaUtil {
         String password = prefs.getString(context.getString(R.string.pref_key_password), "");
 
         return new YambaClient(username, password);
+    }
+
+    public static CharSequence getCreatedAtString(long createdAt) {
+        return DateUtils.getRelativeTimeSpanString(createdAt,
+                System.currentTimeMillis(), 0);
     }
 }

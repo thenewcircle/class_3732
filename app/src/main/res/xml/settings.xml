@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-        android:key="@string/pref_key_username"
-        android:title="@string/pref_title_username"
-        android:summary="@string/pref_summary_username"
-        android:defaultValue="student" />
-    <EditTextPreference
-        android:key="@string/pref_key_password"
-        android:title="@string/pref_title_password"
-        android:summary="@string/pref_summary_password"
-        android:password="true"
-        android:defaultValue="password" />
+    <ListPreference
+        android:key="@string/pref_key_refresh"
+        android:title="@string/pref_title_refresh"
+        android:summary="@string/pref_summary_refresh"
+        android:entries="@array/refresh_entries"
+        android:entryValues="@array/refresh_values"
+        android:defaultValue="0"/>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_account">
+        <EditTextPreference
+            android:key="@string/pref_key_username"
+            android:title="@string/pref_title_username"
+            android:summary="@string/pref_summary_username"
+            android:defaultValue="student" />
+        <EditTextPreference
+            android:key="@string/pref_key_password"
+            android:title="@string/pref_title_password"
+            android:summary="@string/pref_summary_password"
+            android:password="true"
+            android:defaultValue="password" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

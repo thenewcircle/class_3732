@@ -29,5 +29,10 @@
     <string name="title_activity_timeline">TimelineActivity</string>
     <string name="action_post">Post Status</string>
     <string name="empty_list">No Items</string>
+    <string name="title_activity_status_details">StatusDetailsActivity</string>
+    <string name="pref_category_account">Account Settings</string>
+    <string name="pref_key_refresh">prefRefreshInterval</string>
+    <string name="pref_title_refresh">Auto-Refresh Interval</string>
+    <string name="pref_summary_refresh">How often you want to pull new Yamba updates.</string>
 
 </resources>
