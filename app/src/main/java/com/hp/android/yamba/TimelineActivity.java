@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 public class TimelineActivity extends Activity implements TimelineFragment.OnTimelineInteractionListener {
@@ -14,8 +16,9 @@ public class TimelineActivity extends Activity implements TimelineFragment.OnTim
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-    }
 
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,6 +54,6 @@ public class TimelineActivity extends Activity implements TimelineFragment.OnTim
 
     @Override
     public void onTimelineItemClick(Uri uri) {
-
+        Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show();
     }
 }

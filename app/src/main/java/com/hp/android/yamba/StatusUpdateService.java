@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
@@ -57,8 +58,10 @@ public class StatusUpdateService extends IntentService {
                 Intent callback = new Intent(this, StatusActivity.class);
                 callback.putExtra(EXTRA_STATUS, status);
 
-                PendingIntent trigger = PendingIntent.getActivity(this, 0, callback,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
+                //Synthesize the activity stack back to timeline when deep-linking from here
+                PendingIntent trigger = TaskStackBuilder.create(this)
+                        .addNextIntentWithParentStack(callback)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 note = new Notification.Builder(this)
                         .setContentTitle(getString(R.string.notification_post_error_title))

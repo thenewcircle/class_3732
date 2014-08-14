@@ -2,16 +2,24 @@ package com.hp.android.yamba;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.ContentUris;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 
-public class TimelineFragment extends Fragment {
+public class TimelineFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     public interface OnTimelineInteractionListener {
         public void onTimelineItemClick(Uri uri);
@@ -21,6 +29,8 @@ public class TimelineFragment extends Fragment {
 
     private ListView mListView;
     private TextView mEmptyView;
+
+    private SimpleCursorAdapter mAdapter;
 
     public TimelineFragment() {
         // Required empty public constructor
@@ -35,12 +45,44 @@ public class TimelineFragment extends Fragment {
         mEmptyView = (TextView) root.findViewById(R.id.empty);
 
         mListView.setEmptyView(mEmptyView);
+        mListView.setOnItemClickListener(this);
+
+        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.timeline_item, null,
+                new String[] {StatusContract.Columns.USER, StatusContract.Columns.MESSAGE, StatusContract.Columns.CREATED_AT},
+                new int[] {R.id.text_user, R.id.text_message, R.id.text_created_at},
+                0);
+        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                int createdAtIndex = cursor.getColumnIndex(StatusContract.Columns.CREATED_AT);
+                if (createdAtIndex == columnIndex) {
+                    long createdAt = cursor.getLong(createdAtIndex);
+                    CharSequence dateString = DateUtils.getRelativeTimeSpanString(createdAt, System.currentTimeMillis(), 0);
+
+                    TextView createdAtText = (TextView) view.findViewById(R.id.text_created_at);
+                    createdAtText.setText(dateString);
+
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        mListView.setAdapter(mAdapter);
 
         return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Uri uri = ContentUris.withAppendedId(StatusContract.CONTENT_URI, id);
         if (mListener != null) {
             mListener.onTimelineItemClick(uri);
         }
@@ -61,6 +103,22 @@ public class TimelineFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), StatusContract.CONTENT_URI, null, null, null,
+                StatusContract.DEFAULT_SORT_ORDER);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
     }
 
 }
