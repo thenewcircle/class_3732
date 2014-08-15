@@ -8,6 +8,10 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 
 public class TimelineActivity extends Activity implements TimelineFragment.OnTimelineInteractionListener {
@@ -23,6 +27,15 @@ public class TimelineActivity extends Activity implements TimelineFragment.OnTim
 
         View pane = findViewById(R.id.fragment_details);
         mInTwoPaneMode = (pane != null);
+
+        switch (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this)) {
+            case ConnectionResult.SUCCESS:
+                LogUtil.d(this, "Connected to Google Play Services");
+                break;
+            default:
+                Toast.makeText(this, "YOU MUST UPDATE!", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     @Override

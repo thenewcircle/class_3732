@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.location.Location;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
 import com.marakana.android.yamba.clientlib.YambaClientException;
@@ -19,6 +20,7 @@ import com.marakana.android.yamba.clientlib.YambaClientException;
 public class StatusUpdateService extends IntentService {
 
     public static final String EXTRA_STATUS = "com.hp.android.yamba.EXTRA_STATUS";
+    public static final String EXTRA_LOCATION = "com.hp.android.yamba.EXTRA_LOCATION";
 
     public StatusUpdateService() {
         super("StatusUpdateService");
@@ -50,7 +52,12 @@ public class StatusUpdateService extends IntentService {
             mNotificationManager.notify(YambaUtil.NOTE_POST_ID, note);
 
             try {
-                mYambaClient.postStatus(status);
+                if (intent.hasExtra(EXTRA_LOCATION)) {
+                    Location location = intent.getParcelableExtra(EXTRA_LOCATION);
+                    mYambaClient.postStatus(status, location.getLatitude(), location.getLongitude());
+                } else {
+                    mYambaClient.postStatus(status);
+                }
 
                 mNotificationManager.cancel(YambaUtil.NOTE_POST_ID);
                 LogUtil.d(this, "Status Complete");
