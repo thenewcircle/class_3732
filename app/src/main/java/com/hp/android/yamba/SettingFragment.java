@@ -1,7 +1,6 @@
 package com.hp.android.yamba;
 
 
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -50,7 +49,7 @@ public class SettingFragment extends PreferenceFragment implements SharedPrefere
             preference.setSummary("Auto-Refresh Disabled");
         } else {
             CharSequence selected = preference.getEntry();
-            preference.setSummary("Refresh interval set to "+selected);
+            preference.setSummary("Refresh interval set to " + selected);
         }
     }
 }
